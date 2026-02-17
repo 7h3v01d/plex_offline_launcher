@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Search Results for "{{ query }}"</h2>
+
+    {% if results %}
+        <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+            {% for item in results %}
+                <a href="/item/{{ item.ratingKey }}" class="card">
+                    <img src="{{ item.thumbUrl }}" alt="{{ item.title }}" loading="lazy">
+                    <div class="card-title">{{ item.title }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+
+{% endblock %}

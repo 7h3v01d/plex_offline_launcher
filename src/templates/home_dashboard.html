@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+    {% if on_deck %}
+    <section class="carousel">
+        <h2>Continue Watching</h2>
+        <div class="carousel-inner">
+            {% for item in on_deck %}
+                <a href="/item/{{ item.ratingKey }}" class="card">
+                    <img src="{{ item.thumbUrl }}" alt="{{ item.title }}" loading="lazy">
+                    <div class="card-title">{{ item.title }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if recently_added %}
+    <section class="carousel">
+        <h2>Recently Added</h2>
+        <div class="carousel-inner">
+            {% for item in recently_added %}
+                <a href="/item/{{ item.ratingKey }}" class="card">
+                    <img src="{{ item.thumbUrl }}" alt="{{ item.title }}" loading="lazy">
+                    <div class="card-title">{{ item.title }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+{% endblock %}

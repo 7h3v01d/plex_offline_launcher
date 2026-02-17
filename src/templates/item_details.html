@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .details-backdrop { 
+        background-image: linear-gradient(to top, rgba(31,35,38,1) 15%, rgba(31,35,38,0.7) 100%), url('{{ item.artUrl }}'); 
+        background-size: cover; 
+        background-position: center; 
+        border-radius: 8px; 
+        padding: 2rem; 
+        display: flex; 
+        gap: 2rem; 
+        align-items: flex-start; 
+    }
+    .details-poster img { width: 250px; border-radius: 8px; }
+    .details-info h2 { margin-top: 0; font-size: 2.5rem; }
+    .details-meta { display: flex; gap: 1rem; margin-bottom: 1rem; opacity: 0.8; }
+    .details-summary { max-width: 800px; line-height: 1.6; }
+    .action-buttons { margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; }
+    .play-button { display: inline-block; background-color: var(--plex-orange); color: var(--plex-dark); padding: 0.75rem 1.5rem; border-radius: 5px; text-decoration: none; font-weight: bold; }
+    .seasons-list { margin-top: 2rem; }
+    .season { margin-bottom: 1.5rem; }
+    .episode-list { list-style: none; padding: 0; }
+    .episode { display: flex; align-items: center; gap: 1rem; background-color: var(--plex-grey); padding: 0.5rem; border-radius: 5px; margin-bottom: 0.5rem; }
+    .episode img { width: 180px; border-radius: 3px; }
+</style>
+
+<div class="details-backdrop">
+    <div class="details-poster">
+        <img src="{{ item.thumbUrl }}" alt="{{ item.title }}">
+    </div>
+    <div class="details-info">
+        <h2>{{ item.title }}</h2>
+        <div class="details-meta">
+            <span>{{ item.year }}</span>
+            <span>{{ item.contentRating }}</span>
+            <span>{{ item.duration // 60000 }} min</span>
+        </div>
+        <p class="details-summary">{{ item.summary }}</p>
+        <div class="action-buttons">
+            {% if item.type == 'movie' %}
+                <a href="/player/{{ item.ratingKey }}" class="play-button">▶ Play Movie</a>
+            {% endif %}
+
+            {% if item.isWatched %}
+                <a href="/item/{{ item.ratingKey }}/mark_unwatched" class="play-button" style="background-color: var(--plex-grey);">Mark as Unwatched</a>
+            {% else %}
+                <a href="/item/{{ item.ratingKey }}/mark_watched" class="play-button" style="background-color: #4CAF50;">Mark as Watched</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if item.type == 'show' %}
+<div class="seasons-list">
+    <h2>Seasons</h2>
+    {% for season in item.seasons() %}
+        <div class="season">
+            <h3>{{ season.title }}</h3>
+            <ul class="episode-list">
+                {% for episode in season.episodes() %}
+                <li class="episode">
+                    <img src="{{ episode.thumbUrl }}" alt="{{ episode.title }}">
+                    <div>
+                        <strong>{{ episode.index }}. {{ episode.title }}</strong>
+                        <p>{{ episode.summary[:150] }}...</p> <div class="action-buttons" style="margin-top: 0.5rem;">
+                             <a href="/player/{{ episode.ratingKey }}" class="play-button" style="padding: 0.5rem 1rem;">▶ Play</a>
+                             {% if episode.isWatched %}
+                                 <a href="/item/{{ episode.ratingKey }}/mark_unwatched" class="play-button" style="padding: 0.5rem 1rem; background-color: var(--plex-grey);">Unwatch</a>
+                             {% else %}
+                                 <a href="/item/{{ episode.ratingKey }}/mark_watched" class="play-button" style="padding: 0.5rem 1rem; background-color: #4CAF50;">Watch</a>
+                             {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Playing: {{ item.title }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; background-color: #000; }
+        #video { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <video id="video" controls autoplay></video>
+
+    <script>
+        var video = document.getElementById('video');
+        // This is the HLS stream URL we pass from our Python app
+        var streamUrl = '{{ stream_url | safe }}'; 
+
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Fallback for browsers with native HLS support (like Safari)
+            video.src = streamUrl;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        }
+    </script>
+</body>
+</html>
